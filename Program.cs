@@ -26,17 +26,18 @@ namespace ReportGen
         word.Document worddoc;
         public TableAdder ta = new TableAdder();
         DateStrFormatter dsf = new DateStrFormatter();
-        DateTime the_date = new DateTime(2014, 9, 1, 0, 0, 0);
+        DateTime the_date = new DateTime(2015, 10, 1, 0, 0, 0);
         DateTime the_month_begin, the_month_end;
         string datestr_abid, datestr;
-        string bitemfilterstr = "(bitem != '无' and bitem != '?' and bitem != '??' and bitem != '???' and bitem != '????' and bitem != '?????' and bitem != '其它分量受影响，本分量正常')";
+        string bitemfilterstr = "(bitem != '无' and bitem != '?' and bitem != '??' and bitem != '???' and bitem != '????' and bitem != '?????' )";
+        string type2filterstr = "(type2_name != '其它分量受影响，本分量正常')";
         string strsql, tmpstr;
         OracleHelper orahlper;
         DataTableHelper dthlper = new DataTableHelper();
         public A()
         {
-            oracon2 = new OracleConnection("server = 127.0.0.1/orcx; user id = qzdata; password = xie51");
-            oracon = new OracleConnection("server = 10.5.67.11/pdbqz; user id = qzdata; password = qz9401tw");
+            oracon = new OracleConnection("server = 127.0.0.1/orcx; user id = qzdata; password = xie51");
+            oracon2 = new OracleConnection("server = 10.5.67.11/pdbqz; user id = qzdata; password = qz9401tw");
             wordapp = new word.Application();
             worddoc = new word.Document();
             worddoc = wordapp.Documents.Add();
@@ -56,7 +57,7 @@ namespace ReportGen
         ~A()
         {
             oracon.Close();
-            worddoc.SaveAs2("d:\\doc5_1");
+            worddoc.SaveAs2("d:\\doc5_2");
             wordapp.Visible = true;
             //     worddoc.Close();
             //     wordapp.Quit();

@@ -1,4 +1,8 @@
-﻿using System;
+﻿#define 第3章第0段
+#define 第3章第1节
+#define 第3章第2至6节
+#define 第3章第7节
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +17,8 @@ namespace ReportGen
     {
         public void 第3章()
         {
+            const int ab_end = 6;
+#if 第3章第0段
             #region 第3章第0段
             wordapp.Selection.ParagraphFormat.set_Style("标题 1");
             wordapp.Selection.TypeText("3 事件分析" + Environment.NewLine);
@@ -43,7 +49,8 @@ and b.science != '辅助' and a.ab_id >=2 and a.ab_id <= 7
             tmpstr = tmpstr.Remove(tmpstr.Length - 1) + "。" + Environment.NewLine;
             wordapp.Selection.TypeText(tmpstr);
             #endregion
-
+#endif
+#if 第3章第1节
             #region 第3章第1节
             wordapp.Selection.ParagraphFormat.set_Style("标题 2");
             wordapp.Selection.TypeText("3.1 总体情况" + Environment.NewLine);
@@ -206,16 +213,17 @@ select distinct a.log_id, a.ab_id, b.science from qzdata.qz_abnormity_log a, qzd
             {
                 string[] newcolname = { "仪器名称", "观测系统(套)", "自然环境(套)", "场地环境(套)", "人为干扰(套)", "地球物理事件(套)", "不明原因(套)", "运行总数(套)" };
                 wordapp.Selection.TypeText(string.Format("{0}年{1}月，前兆台网仪器事件记录统计见表3.1.3。", the_date.Year, the_date.Month) + Environment.NewLine);
-                ta.AddTable(表3_1_3, newcolname, (int[])null, string.Format("表3.1.3 {0}年{1}月前兆台网仪器事件记录统计", the_date.Year, the_date.Month));
+                ta.AddTable(表3_1_3, newcolname, new int[]{90, 53, 53, 53, 53, 53, 53, 53}, string.Format("表3.1.3 {0}年{1}月前兆台网仪器事件记录统计", the_date.Year, the_date.Month));
             }
             wordapp.Selection.TypeParagraph();
             #endregion
-
+#endif
             //        ta.enable = true;
+#if 第3章第2至6节
             #region 第3章第2至6节
             string[] __abanaly = { "观测系统故障分析", "自然环境干扰分析", "场地环境影响分析", "人为干扰分析", "地球物理事件分析", "不明原因事件分析" };
             string[] __abname2 = { "观测系统故障", "自然环境干扰", "场地环境影响", "人为干扰", "地球物理事件", "不明原因事件" };
-            for (int ab = 2; ab <= 6; ab++)
+            for (int ab = 2; ab <= ab_end; ab++)
             {
                 wordapp.Selection.ParagraphFormat.set_Style("标题 2");
                 wordapp.Selection.TypeText(string.Format("3.{0} ", ab) + __abanaly[ab - 2] + Environment.NewLine);
@@ -225,7 +233,7 @@ select distinct a.log_id, a.ab_id, b.science from qzdata.qz_abnormity_log a, qzd
                 wordapp.Selection.ParagraphFormat.set_Style("图例表例");
                 wordapp.Selection.TypeText(string.Format("图3.{0}.1 {1}年{2}月记录到{3}的台站分布图", ab, the_date.Year, the_date.Month, __ablist[ab - 2]) + Environment.NewLine);
 
-                #region 第3_x_1节
+            #region 第3_x_1节
                 wordapp.Selection.ParagraphFormat.set_Style("标题 3");
                 wordapp.Selection.TypeText(string.Format("3.{0}.1 不同测项记录到{1}的主要因素", ab, __ablist[ab - 2]) + Environment.NewLine);
                 wordapp.Selection.ParagraphFormat.set_Style("正文");
@@ -233,7 +241,7 @@ select distinct a.log_id, a.ab_id, b.science from qzdata.qz_abnormity_log a, qzd
                 string str3 = string.Format("各测项的影响因素统计见表3.{0}.1.1。其中", ab);
                 DataTable 表3_x_1_1 = orahlper.GetDataTable(string.Format(@"select bitem, type2_name, count(instrid) from(
 select distinct B.BITEM, C.TYPE2_NAME, B.STATIONID||'xx'||B.POINTID instrid from qzdata.qz_abnormity_itemlog a, qzdata.qz_abnormity_log b, QZDATA.QZ_ABNORMITY_TYPE2 c, QZDATA.QZ_ABNORMITY_EVALIST d where A.LOG_ID = b.log_id and A.TYPE2_ID = C.TYPE2_ID and _DATE and b.stationid = d.stationid and b.pointid = D.POINTID and D.SCIENCE != '辅助' and B.AB_ID = {0} 
-) where _BITEMFILTER group by type2_name, bitem order by bitem, count(instrid) desc", ab).Replace("_DATE", datestr).Replace("_BITEMFILTER", bitemfilterstr));
+) where _BITEMFILTER and _TYPE2FILTER group by type2_name, bitem order by bitem, count(instrid) desc", ab).Replace("_DATE", datestr).Replace("_BITEMFILTER", bitemfilterstr).Replace("_TYPE2FILTER", type2filterstr));
                 DataView 表3_x_1_1view = 表3_x_1_1.DefaultView;
                 DataTable bitemlist = 表3_x_1_1view.ToTable(true, "bitem");
                 for (int bitemi = 0; bitemi < bitemlist.Rows.Count; bitemi++)
@@ -257,7 +265,7 @@ select distinct B.BITEM, C.TYPE2_NAME, B.STATIONID||'xx'||B.POINTID instrid from
                 wordapp.Selection.TypeParagraph();
                 #endregion
 
-                #region 第3_x_2节
+            #region 第3_x_2节
                 DataTable 表3_1_2比率 = 表3_1_2.Copy();
                 for (int i = 0; i < 表3_1_2.Rows.Count; i++)
                 {
@@ -367,21 +375,21 @@ select distinct stationid||'xx'||pointid as instrid from  qzdata.qz_abnormity_ev
                 wordapp.Selection.TypeText(tmpstr);
                 #endregion
 
-                #region 第3_x_3节
+            #region 第3_x_3节
                 DataTable 影响因素_仪器套数 = orahlper.GetDataTable(string.Format(@"select type2_name, count(instrid) from(
 select distinct d.TYPE2_NAME, b.stationid||'xx'||B.POINTID as instrid from qzdata.qz_abnormity_itemlog a, qzdata.qz_abnormity_log b, qzdata.qz_abnormity_evalist c, QZDATA.QZ_ABNORMITY_TYPE2 d where a.log_id = b.log_id and B.STATIONID = c.stationid and b.pointid = c.pointid and C.SCIENCE != '辅助' and _DATE and a.type2_id = D.TYPE2_ID and B.AB_ID = {0}
-) group by type2_name order by count(instrid) desc", ab).Replace("_DATE", datestr));
+) where _TYPE2FILTER group by type2_name order by count(instrid) desc", ab).Replace("_DATE", datestr).Replace("_TYPE2FILTER", type2filterstr));
                 DataTable 影响因素_台站数 = orahlper.GetDataTable(string.Format(@"select type2_name, count(stationid) from(
 select distinct d.TYPE2_NAME, b.stationid from qzdata.qz_abnormity_itemlog a, qzdata.qz_abnormity_log b, qzdata.qz_abnormity_evalist c, QZDATA.QZ_ABNORMITY_TYPE2 d where a.log_id = b.log_id and B.STATIONID = c.stationid and b.pointid = c.pointid and C.SCIENCE != '辅助' and _DATE and a.type2_id = D.TYPE2_ID and B.AB_ID = {0}
-) group by type2_name order by count(stationid) desc", ab).Replace("_DATE", datestr));
+) where _TYPE2FILTER group by type2_name order by count(stationid) desc", ab).Replace("_DATE", datestr).Replace("_TYPE2FILTER", type2filterstr));
 
                 DataTable 影响因素_bitem_仪器套数 = orahlper.GetDataTable(string.Format(@"select type2_name, bitem, count(instrid) from(
 select distinct d.TYPE2_NAME, b.stationid||'xx'||B.POINTID as instrid, b.bitem from qzdata.qz_abnormity_itemlog a, qzdata.qz_abnormity_log b, qzdata.qz_abnormity_evalist c, QZDATA.QZ_ABNORMITY_TYPE2 d where a.log_id = b.log_id and B.STATIONID = c.stationid and b.pointid = c.pointid and C.SCIENCE != '辅助' and _DATE and a.type2_id = D.TYPE2_ID and B.AB_ID = {0}
-) where _BITEMFILTER group by type2_name, bitem order by type2_name, count(instrid) desc", ab).Replace("_DATE", datestr).Replace("_BITEMFILTER", bitemfilterstr));
+) where _BITEMFILTER and _TYPE2FILTER group by type2_name, bitem order by type2_name, count(instrid) desc", ab).Replace("_DATE", datestr).Replace("_BITEMFILTER", bitemfilterstr).Replace("_TYPE2FILTER", type2filterstr));
 
                 DataTable 影响因素_仪器名称_仪器套数 = orahlper.GetDataTable(string.Format(@"select type2_name, name, count(instrid) from(
 select distinct d.TYPE2_NAME, b.stationid||'xx'||B.POINTID as instrid, E.INSTRTYPE||E.INSTRNAME as name from qzdata.qz_abnormity_itemlog a, qzdata.qz_abnormity_log b, qzdata.qz_abnormity_evalist c, QZDATA.QZ_ABNORMITY_TYPE2 d, qzdata.qz_abnormity_instrinfo e where a.log_id = b.log_id and B.STATIONID = c.stationid and b.pointid = c.pointid and C.SCIENCE != '辅助' and {0} and a.type2_id = D.TYPE2_ID and B.AB_ID = {1} and B.INSTRCODE = E.INSTRCODE
-) group by type2_name, name order by type2_name, count(instrid) desc", datestr, ab));
+) where _TYPE2FILTER group by type2_name, name order by type2_name, count(instrid) desc".Replace("_TYPE2FILTER", type2filterstr), datestr, ab));
 
                 DataView 影响因素_bitem_仪器套数view = 影响因素_bitem_仪器套数.DefaultView;
                 DataView 影响因素_仪器名称_仪器套数view = 影响因素_仪器名称_仪器套数.DefaultView;
@@ -446,11 +454,11 @@ select distinct d.TYPE2_NAME, b.stationid||'xx'||B.POINTID as instrid, E.INSTRTY
                 }
                 tmpstr = tmpstr.Remove(tmpstr.Length - 1) + "等。" + Environment.NewLine;
                 wordapp.Selection.TypeText(tmpstr);
-                ta.AddTable(表3_x_3_1, (int[])null, string.Format("表3.{0}.3.1 {1}年{2}月{3}影响因素统计", ab, the_date.Year, the_date.Month, __abname2[ab - 2]));
+                ta.AddTable(表3_x_3_1, (string[])null, new int[]{60,40,40,120,200}, string.Format("表3.{0}.3.1 {1}年{2}月{3}影响因素统计", ab, the_date.Year, the_date.Month, __abname2[ab - 2]));
                 wordapp.Selection.TypeParagraph();
                 #endregion
 
-                #region 第3_x_4节
+            #region 第3_x_4节
                 DataTable 表3_x_4_1 = orahlper.GetDataTable(string.Format(@"select style, sum(decode(dura, 1, 1, 0)) short, sum(decode(dura, 2, 1, 0)) middle, sum(decode(dura, 3, 1, 0)) lon, sum(decode(dura, 0, 1, 0)) ongoing, count(dura) from (
 select distinct decode(b.style, null, '其它', b.style) as style, a.log_id, case when a.END_DATE is null then 0 when a.end_date - a.START_DATE >= 7 then 3 when a.end_date - a.start_date < 3 then 1 else 2 end as dura from qzdata.qz_abnormity_log a, qzdata.qz_abnormity_itemlog b, qzdata.qz_abnormity_evalist c where a.log_id = b.log_id and a.stationid = c.stationid and a.pointid = c.pointid and c.science != '辅助' and a.ab_id = {0} and {1}
 ) group by style order by count(dura) desc", ab, datestr));
@@ -491,7 +499,8 @@ select distinct decode(b.style, null, '其它', b.style) as style, a.log_id, cas
                 #endregion
             }
             #endregion
-
+#endif
+#if 第3章第7节
             #region 第3章第7节
 
             wordapp.Selection.ParagraphFormat.set_Style("标题 2");
@@ -664,6 +673,7 @@ select distinct decode(b.style, null, '其它', b.style) as style, a.log_id, c.s
 
 
             #endregion
+#endif
         }
     }
 }

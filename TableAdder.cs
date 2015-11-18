@@ -49,23 +49,7 @@ namespace ReportGen
 
         public void AddFolioTable(DataTable dt, int[] colwidth, string title = null)
         {
-            DataTableHelper dth = new DataTableHelper();
-            object[,] table = dth.DataTableTo2DTable(dt);
-            table = dth.Folio2DTable_HasColName(table);
-            if (colwidth == null)
-            {
-                AddTable(table, null, title);
-            }
-            else
-            {
-                int cn = colwidth.GetLength(0);
-                int[] _wid = new int[cn * 2];
-                for (int i = 0; i < cn; i++)
-                {
-                    _wid[i] = _wid[cn + i] = colwidth[i];
-                }
-                AddTable(table, _wid, title);
-            }
+            AddFolioTable(dt, null, colwidth, title);
         }
 
         public void AddNullTable(string title)
@@ -73,10 +57,6 @@ namespace ReportGen
             addnull = true;
             AddTable(wordapp, worddoc, (object[,])null, null, title);
             addnull = false;
-        }
-        public void AddTable(DataTable dt, int[] colwidth, string title = null)
-        {
-            AddTable(this.wordapp, this.worddoc, dt, colwidth, title);
         }
         public void AddTable(object[,] t, int[] colwidth, string title = null)
         {
@@ -87,25 +67,23 @@ namespace ReportGen
             AddTable(this.wordapp, this.worddoc, dt, newcolname, colwidth, title);
         }
         
-        public void AddTable(word.Application wdapp, word.Document wddoc, DataTable dt, int[] colwidth, string title = null)
-        {
-            DataTableHelper dth = new DataTableHelper();
-            this.AddTable(wdapp, wddoc, dth.DataTableTo2DTable(dt), colwidth, title);
-        }
         public void AddTable(word.Application wdapp, word.Document wddoc, OracleConnection oracon, string strsql, string title = null)
         {
             OracleDataAdapter oda = new OracleDataAdapter(strsql, oracon);
             DataTable dt = new DataTable();
             oda.Fill(dt);
-            this.AddTable(wdapp, wddoc, dt, null, title);
+            this.AddTable(wdapp, wddoc, dt, null, null, title);
         }
         public void AddTable(word.Application wdapp, word.Document wddoc, DataTable dt, string[] newcolname, int[] colwidth, string title = null)
         {
             DataTableHelper dth = new DataTableHelper();
             object[,] table = dth.DataTableTo2DTable(dt);
-            for (int j = 0; j < newcolname.GetLength(0); j++)
+            if (newcolname != null)
             {
-                table[0, j] = newcolname[j];
+                for (int j = 0; j < newcolname.GetLength(0); j++)
+                {
+                    table[0, j] = newcolname[j];
+                }
             }
             this.AddTable(wdapp, wddoc, table, colwidth, title);
         }
@@ -140,13 +118,24 @@ namespace ReportGen
             {
                 for (int j = 0; j < colcount; j++)
                 {
-                    table.Columns[j].Width = colwidth[j];
+                    table.Columns[j+1].Width = colwidth[j];
                 }
             }
             for (int i = 0; i < rowcount; i++)
             {
                 for (int j = 0; j < colcount; j++)
                 {
+                    if (fonttype == 2)
+                    {
+                        if (i == 0)
+                        {
+                            table.Cell(i + 1, j + 1).Range.ParagraphFormat.set_Style("表格列首");
+                        }
+                        else
+                        {
+                            table.Cell(i + 1, j + 1).Range.ParagraphFormat.set_Style("表格内容");
+                        }
+                    }
                     if (t[i, j] == null)
                     {
                     }
@@ -157,17 +146,6 @@ namespace ReportGen
                     }
                     else
                     {
-                        if (fonttype == 2)
-                        {
-                            if (i == 0)
-                            {
-                                table.Cell(i + 1, j + 1).Range.ParagraphFormat.set_Style("表格列首");
-                            }
-                            else
-                            {
-                                table.Cell(i + 1, j + 1).Range.ParagraphFormat.set_Style("表格内容");
-                            }
-                        }
                         table.Cell(i + 1, j + 1).Range.Text = t[i, j].ToString();
                     }
                 }

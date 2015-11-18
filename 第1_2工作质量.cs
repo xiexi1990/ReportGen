@@ -182,7 +182,19 @@ group by UNITNAME order by unitname", datestr_abid));
                 }
             }
 
-            ta.AddFolioTable(表1_2_1, new string[] { "单位名称", "应分析仪器(套)", "未分析仪器(套)", "分析完整率(%)", "事件记录(条)", "典型事件(条)" }, (int[])null, string.Format("表1.2.1.1 {0}年{1}月区域前兆台网观测数据跟踪分析工作情况统计", the_date.Year, the_date.Month));
+            for (int i = 0; i < 表1_2_1.Rows.Count; i++)
+            {
+                for (int j = 0; j < __unitnamelist.GetLength(0); j++)
+                {
+                    if (表1_2_1.Rows[i]["unitname"].ToString() == __unitnamelist[j].ToString())
+                    {
+                        表1_2_1.Rows[i]["unitname"] = __abbrunitnamelist[j];
+                        break;
+                    }
+                }
+            }
+
+            ta.AddFolioTable(表1_2_1, new string[] { "单位名称", "应分析仪器(套)", "未分析仪器(套)", "分析完整率(%)", "事件记录(条)", "典型事件(条)" }, new int[]{50,30,30,40,30,30}, string.Format("表1.2.1.1 {0}年{1}月区域前兆台网观测数据跟踪分析工作情况统计", the_date.Year, the_date.Month));
 
             wordapp.Selection.ParagraphFormat.set_Style("标题 3");
             wordapp.Selection.TypeText("1.2.2 区域前兆台网数据跟踪分析月报质量" + Environment.NewLine);
