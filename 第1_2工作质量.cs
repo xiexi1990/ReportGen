@@ -20,8 +20,7 @@ namespace ReportGen
             wordapp.Selection.TypeText("1.2.1 整体情况" + Environment.NewLine);
             wordapp.Selection.ParagraphFormat.set_Style("正文");
             strsql = @"select count(log_id) from( select distinct log_id from
- qzdata.qz_abnormity_log a, qzdata.qz_abnormity_evalist b where a.stationid = b.stationid and a.pointid = b.pointid and b.science != '辅助' and
-                _DATE_ABID)";
+ qzdata.qz_abnormity_log a, qzdata.qz_abnormity_evalist b where a.stationid = b.stationid and a.pointid = b.pointid and b.science != '辅助' and _DATE_ABID)";
             strsql = strsql.Replace("_DATE_ABID", datestr_abid);
             int 月总事件数 = orahlper.GetInt32(strsql);
 

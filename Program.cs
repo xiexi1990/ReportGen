@@ -31,6 +31,7 @@ namespace ReportGen
         string datestr_abid, datestr;
         string bitemfilterstr = "(bitem != '无' and bitem != '?' and bitem != '??' and bitem != '???' and bitem != '????' and bitem != '?????' )";
         string type2filterstr = "(type2_name != '其它分量受影响，本分量正常')";
+        string abidstr = "(a.ab_id >=2 and a.ab_id <=7)";
         string strsql, tmpstr;
         OracleHelper orahlper;
         DataTableHelper dthlper = new DataTableHelper();
@@ -45,7 +46,8 @@ namespace ReportGen
             ta.wordapp = wordapp;
             ta.worddoc = worddoc;
             datestr = dsf.GetDateStr(the_date);
-            datestr_abid = "(" + datestr + "and a.ab_id >=1 and a.ab_id <= 7)";
+       //     datestr_abid = "(" + datestr + "and a.ab_id >=1 and a.ab_id <= 7)";
+            datestr_abid = "(" + datestr + "and" + abidstr + ")";
             oracon2.Open();
             orahlper = new OracleHelper(oracon2);
             orahlper.feedback = true;
@@ -57,7 +59,7 @@ namespace ReportGen
         ~A()
         {
             oracon.Close();
-            worddoc.SaveAs2("d:\\doc5_2");
+            worddoc.SaveAs2("d:\\doc5_3");
             wordapp.Visible = true;
             //     worddoc.Close();
             //     wordapp.Quit();
@@ -137,8 +139,8 @@ select distinct a.stationid, a.pointid, a.ab_id, C.INSTRTYPE||C.INSTRNAME name f
             A a = new A();
       //      a.ta.enable = false;
        //     a.试验段();
-            a.第1_2工作质量();
-            a.第3章();
+      //      a.第1_2工作质量();
+           a.第3章();
             return;
 #endif
         

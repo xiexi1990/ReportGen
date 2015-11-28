@@ -466,7 +466,7 @@ select distinct decode(b.style, null, '其它', b.style) as style, a.log_id, cas
                 wordapp.Selection.TypeText(string.Format("3.{0}.4 {1}的持续时间与表现形态", ab, __ablist[ab - 2]) + Environment.NewLine);
                 wordapp.Selection.ParagraphFormat.set_Style("正文");
                 {
-                    string[] newcolname = { "表现形态", "持续时间短（<3天）", "持续时间中（3-7天）", "持续时间长（>7天）", "尚未结束", "合计" };
+                    string[] newcolname = { "表现形态", "持续时间短（<3天）（条）", "持续时间中（3-7天）（条）", "持续时间长（>7天）（条）", "尚未结束（条）", "合计（条）" };
                     ta.AddTable(表3_x_4_1, newcolname, (int[])null, string.Format("表3.{0}.4.1 {1}年{2}月{3}的持续时间与表现形态统计", ab, the_date.Year, the_date.Month, __ablist[ab - 2]));
                 }
                 wordapp.Selection.TypeText(string.Format("从表3.{0}.4.1中可看出，", ab));
@@ -545,7 +545,7 @@ select distinct B.LOG_ID, D.UNITNAME from qzdata.qz_abnormity_itemlog a, qzdata.
                 }
                 表3_7_1tmp.Rows.Add(dr);
             }
-            ta.AddTable(表3_7_1tmp, new string[] { "单位名称", "不明原因事件", "持续时间短（<3天）", "持续时间中（3-7天）", "持续时间长（>7天）", "尚未结束", "疑似异常事件" }, (int[])null, string.Format("表3.7.1 {0}年{1}月区域前兆台网不明原因事件统计", the_date.Year, the_date.Month));
+            ta.AddTable(表3_7_1tmp, new string[] { "单位名称", "不明原因事件（条）", "持续时间短（<3天）（条）", "持续时间中（3-7天）（条）", "持续时间长（>7天）（条）", "尚未结束（条）", "疑似异常事件（条）" }, (int[])null, string.Format("表3.7.1 {0}年{1}月区域前兆台网不明原因事件统计", the_date.Year, the_date.Month));
             wordapp.Selection.TypeText(Environment.NewLine);
             ta.AddNullTable("图3.7.1  各区域台网记录到不明原因事件数量统计");
             wordapp.Selection.TypeText(Environment.NewLine);
@@ -583,7 +583,7 @@ select distinct decode(b.style, null, '其它', b.style) as style, a.log_id, c.s
                 }
                 表3_7_2_1.Rows.Add(dr);
             }
-            ta.AddTable(表3_7_2_1, new string[] { "变化形态", "形变", "重力", "地磁", "地电", "流体", "合计" }, (int[])null, "表3.7.2.1 持续时间中、短的不明原因事件学科、变化形态分布");
+            ta.AddTable(表3_7_2_1, new string[] { "变化形态", "形变（条）", "重力（条）", "地磁（条）", "地电（条）", "流体（条）", "合计（条）" }, (int[])null, "表3.7.2.1 持续时间中、短的不明原因事件学科、变化形态分布");
             wordapp.Selection.TypeText("从表3.7.2.1中可看出，形变、地磁、地电和流体学科存在持续时间中、短的不明原因事件，其中以流体、形变学科的事件数量居多，变化形态多为突跳和阶变，也有部分为上升、下降、固体潮畸变等原因。持续时间中、短的不明原因事件可能与观测仪器、场地环境、自然环境的短时不稳定或原因未明的变动有关，也有可能是地壳应力瞬时变化的反映。" + Environment.NewLine);
             wordapp.Selection.ParagraphFormat.set_Style("标题 3");
             wordapp.Selection.TypeText("3.7.3 持续时间长的不明原因事件的形态特点" + Environment.NewLine);
@@ -605,7 +605,7 @@ select distinct decode(b.style, null, '其它', b.style) as style, a.log_id, c.s
                 }
                 表3_7_3_1.Rows.Add(dr);
             }
-            ta.AddTable(表3_7_3_1, new string[] { "变化形态", "形变", "重力", "地磁", "地电", "流体", "合计" }, (int[])null, "表3.7.3.1 持续时间长的不明原因事件学科、变化形态分布");
+            ta.AddTable(表3_7_3_1, new string[] { "变化形态", "形变（条）", "重力（条）", "地磁（条）", "地电（条）", "流体（条）", "合计（条）" }, (int[])null, "表3.7.3.1 持续时间长的不明原因事件学科、变化形态分布");
             wordapp.Selection.TypeText("从表3.7.3.1中可看出，持续时间长的不明原因事件在变化形态上多为趋势转折、上升、下降、破年变等趋势性变化，此类不明原因事件往往与地质活动和应力场积累转移的中长期作用有关，对地质构造运动和地壳运动有一定程度的反映。" + Environment.NewLine + "持续时间长的不明原因事件时间进程图见图3.7.3.1。" + Environment.NewLine);
             wordapp.Selection.TypeText(Environment.NewLine);
 
