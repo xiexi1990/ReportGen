@@ -91,24 +91,23 @@ namespace ReportGen
     }
     class DataTableHelper
     {
-        public object[,] Folio2DTable_HasColName(object[,] t)
+        public object[,] DupFold2DTable_HasColHeader(int dup, object[,] t)
         {
             int rowcount = t.GetLength(0) - 1, colcount = t.GetLength(1);
-            int newrowcount = (rowcount + 1) / 2, newcolcount = colcount * 2;
-            object[,] newtable = new object[newrowcount + 1, newcolcount];
+            int newrowcount = rowcount / dup + 1, newcolcount = colcount * dup;
+            if (rowcount % dup != 0)
+                newrowcount++;
+            object[,] newtable = new object[newrowcount, newcolcount];
             for (int j = 0; j < colcount; j++)
             {
-                newtable[0, j] = newtable[0, colcount + j] = t[0, j];
+                for (int k = 0; k < dup; k++ )
+                    newtable[0, j + k*colcount] = t[0, j];
             }
-            for (int i = 0; i < newrowcount; i++)
+            for (int i = 0; i < rowcount; i++)
             {
                 for (int j = 0; j < colcount; j++)
                 {
-                    newtable[1 + i, j] = t[1 + i, j];
-                    if (!(i == newrowcount - 1 && rowcount % 2 == 1))
-                    {
-                        newtable[1 + i, colcount + j] = t[1 + i + newrowcount, j];
-                    }
+                    newtable[i % (newrowcount - 1) + 1, j + (i / (newrowcount - 1))*colcount] = t[i + 1, j];
                 }
             }
             return newtable;

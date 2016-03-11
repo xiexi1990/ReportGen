@@ -19,7 +19,7 @@ namespace ReportGen
         private bool addnull = false;
         public int fonttype = 2;
 
-        public void AddFolioTable(DataTable dt, string[] newcolname, int[] colwidth, string title = null)
+        public void AddDupFoldTable(int dup, DataTable dt, string[] newcolname, int[] colwidth, string title = null)
         {
             DataTableHelper dth = new DataTableHelper();
             object[,] table = dth.DataTableTo2DTable(dt);
@@ -30,7 +30,7 @@ namespace ReportGen
                     table[0, j] = newcolname[j];
                 }
             }
-            table = dth.Folio2DTable_HasColName(table);
+            table = dth.DupFold2DTable_HasColHeader(dup, table);
             if (colwidth == null)
             {
                 AddTable(table, null, title);
@@ -47,9 +47,9 @@ namespace ReportGen
             }
         }
 
-        public void AddFolioTable(DataTable dt, int[] colwidth, string title = null)
+        public void AddDupFoldTable(int dup, DataTable dt, int[] colwidth, string title = null)
         {
-            AddFolioTable(dt, null, colwidth, title);
+            AddDupFoldTable(dup, dt, null, colwidth, title);
         }
 
         public void AddNullTable(string title)

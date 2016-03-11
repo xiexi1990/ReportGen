@@ -97,7 +97,7 @@ select distinct a.log_id, a.ab_id, b.science from qzdata.qz_abnormity_log a, qzd
             //      ta.AddTable(学科各类型事件分析1);
 
             tmpstr = string.Format("{0}年{1}月，各学科台网产出的事件分析记录情况见表3.1.1。根据各学科台网记录各类型事件数与所有台台网记录对应类型事件总数的比例分析，", the_date.Year, the_date.Month);
-            DataView 学科各类型事件分析1view = 学科各类型事件分析1.DefaultView;
+            DataView 学科各类型事件分析1view = new DataView(学科各类型事件分析1);
             for (int i = 0; i < 6; i++)
             {
                 学科各类型事件分析1view.Sort = string.Format("ab{0}r desc", 2 + i);
@@ -199,7 +199,16 @@ select distinct a.log_id, a.ab_id, b.science from qzdata.qz_abnormity_log a, qzd
             ta.AddTable(wordapp, worddoc, 表3_1_1, (int[])null, string.Format("表3.1.1 {0}年{1}月学科事件统计", the_date.Year, the_date.Month));
             wordapp.Selection.TypeParagraph();
 
-            DataTable 表3_1_2 = Get_表3_1_2(the_date);
+            DataTable 表3_1_2;
+            if (is_year)
+            {
+                表3_1_2 = Get_表3_1_2(the_year_begin_int, the_month_begin_int, the_year_end_int, the_month_end_int);
+            }
+            else
+            {
+                表3_1_2 = Get_表3_1_2(the_date.Year, the_date.Month, the_date.Year, the_date.Month);
+            }
+           
             {
                 string[] newcolname = { "测项名称", "观测系统(套)", "自然环境(套)", "场地环境(套)", "人为干扰(套)", "地球物理事件(套)", "不明原因(套)", "运行总数(套)" };
 
@@ -209,7 +218,15 @@ select distinct a.log_id, a.ab_id, b.science from qzdata.qz_abnormity_log a, qzd
             }
             wordapp.Selection.TypeParagraph();
 
-            DataTable 表3_1_3 = Get_表3_1_3(the_date);
+            DataTable 表3_1_3;
+            if (is_year)
+            {
+                表3_1_3 = Get_表3_1_3(the_year_begin_int, the_month_begin_int, the_year_end_int, the_month_end_int);
+            }
+            else
+            {
+                表3_1_3 = Get_表3_1_3(the_date.Year, the_date.Month, the_date.Year, the_date.Month);
+            }
             {
                 string[] newcolname = { "仪器名称", "观测系统(套)", "自然环境(套)", "场地环境(套)", "人为干扰(套)", "地球物理事件(套)", "不明原因(套)", "运行总数(套)" };
                 wordapp.Selection.TypeText(string.Format("{0}年{1}月，前兆台网仪器事件记录统计见表3.1.3。", the_date.Year, the_date.Month) + Environment.NewLine);
@@ -242,7 +259,7 @@ select distinct a.log_id, a.ab_id, b.science from qzdata.qz_abnormity_log a, qzd
                 DataTable 表3_x_1_1 = orahlper.GetDataTable(string.Format(@"select bitem, type2_name, count(instrid) from(
 select distinct B.BITEM, C.TYPE2_NAME, B.STATIONID||'xx'||B.POINTID instrid from qzdata.qz_abnormity_itemlog a, qzdata.qz_abnormity_log b, QZDATA.QZ_ABNORMITY_TYPE2 c, QZDATA.QZ_ABNORMITY_EVALIST d where A.LOG_ID = b.log_id and A.TYPE2_ID = C.TYPE2_ID and _DATE and b.stationid = d.stationid and b.pointid = D.POINTID and D.SCIENCE != '辅助' and B.AB_ID = {0} 
 ) where _BITEMFILTER and _TYPE2FILTER group by type2_name, bitem order by bitem, count(instrid) desc", ab).Replace("_DATE", datestr).Replace("_BITEMFILTER", bitemfilterstr).Replace("_TYPE2FILTER", type2filterstr));
-                DataView 表3_x_1_1view = 表3_x_1_1.DefaultView;
+                DataView 表3_x_1_1view = new DataView(表3_x_1_1);
                 DataTable bitemlist = 表3_x_1_1view.ToTable(true, "bitem");
                 for (int bitemi = 0; bitemi < bitemlist.Rows.Count; bitemi++)
                 {
@@ -260,7 +277,7 @@ select distinct B.BITEM, C.TYPE2_NAME, B.STATIONID||'xx'||B.POINTID instrid from
                 str3 = str3.Remove(str3.Length - 1) + "。" + Environment.NewLine;
                 wordapp.Selection.TypeText(str3);
 
-                ta.AddFolioTable(表3_x_1_1, new string[] { "测项名称", "影响因素", "仪器套数" }, (int[])null, string.Format("表3.{0}.1.1 {1}年{2}月记录到{3}测项统计", ab, the_date.Year, the_date.Month, __ablist[ab - 2]));
+                ta.AddDupFoldTable(2, 表3_x_1_1, new string[] { "测项名称", "影响因素", "仪器套数" }, (int[])null, string.Format("表3.{0}.1.1 {1}年{2}月记录到{3}测项统计", ab, the_date.Year, the_date.Month, __ablist[ab - 2]));
 
                 wordapp.Selection.TypeParagraph();
                 #endregion
@@ -274,7 +291,16 @@ select distinct B.BITEM, C.TYPE2_NAME, B.STATIONID||'xx'||B.POINTID instrid from
                         表3_1_2比率.Rows[i][j] = Convert.ToDecimal(表3_1_2.Rows[i][j]) / Convert.ToDecimal(表3_1_2.Rows[i][7]);
                     }
                 }
-                DataTable 上月表3_1_2 = Get_表3_1_2(the_date.AddMonths(-1));
+                DataTable 上月表3_1_2;
+                if (is_year)
+                {
+                    上月表3_1_2 = Get_表3_1_2(the_year_begin_int - 1, the_month_begin_int, the_year_end_int - 1, the_month_end_int);
+                }
+                else
+                {
+                    DateTime tmplast = the_date.AddMonths(-1);
+                    上月表3_1_2 = Get_表3_1_2(tmplast.Year, tmplast.Month, tmplast.Year, tmplast.Month);
+                }
                 DataTable 上月表3_1_2比率 = 上月表3_1_2.Copy();
                 for (int i = 0; i < 上月表3_1_2.Rows.Count; i++)
                 {
@@ -284,10 +310,10 @@ select distinct B.BITEM, C.TYPE2_NAME, B.STATIONID||'xx'||B.POINTID instrid from
                     }
                 }
 
-                DataView 表3_1_2view = 表3_1_2.DefaultView,
-                    上月表3_1_2view = 上月表3_1_2.DefaultView,
-                    表3_1_2比率view = 表3_1_2比率.DefaultView,
-                    上月表3_1_2比率view = 上月表3_1_2比率.DefaultView;
+                DataView 表3_1_2view = new DataView(表3_1_2),
+                    上月表3_1_2view = new DataView(上月表3_1_2),
+                    表3_1_2比率view = new DataView(表3_1_2比率),
+                    上月表3_1_2比率view = new DataView(上月表3_1_2比率);
                 表3_1_2view.Sort =
                     上月表3_1_2view.Sort =
                     表3_1_2比率view.Sort =
@@ -336,7 +362,16 @@ select distinct stationid||'xx'||pointid as instrid from  qzdata.qz_abnormity_ev
                         表3_1_3比率.Rows[i][j] = Convert.ToDecimal(表3_1_3.Rows[i][j]) / Convert.ToDecimal(表3_1_3.Rows[i][7]);
                     }
                 }
-                DataTable 上月表3_1_3 = Get_表3_1_3(the_date.AddMonths(-1));
+                DataTable 上月表3_1_3;
+                if(is_year)
+                {
+                    上月表3_1_3 = Get_表3_1_3(the_year_begin_int - 1, the_month_begin_int, the_year_end_int - 1, the_month_end_int);
+                }
+                else
+                {
+                    DateTime tmplast = the_date.AddMonths(-1);
+                    上月表3_1_3 = Get_表3_1_3(tmplast.Year, tmplast.Month, tmplast.Year, tmplast.Month);
+                }
                 DataTable 上月表3_1_3比率 = 上月表3_1_3.Copy();
                 for (int i = 0; i < 上月表3_1_3.Rows.Count; i++)
                 {
@@ -346,10 +381,10 @@ select distinct stationid||'xx'||pointid as instrid from  qzdata.qz_abnormity_ev
                     }
                 }
 
-                DataView 表3_1_3view = 表3_1_3.DefaultView,
-                    上月表3_1_3view = 上月表3_1_3.DefaultView,
-                    表3_1_3比率view = 表3_1_3比率.DefaultView,
-                    上月表3_1_3比率view = 上月表3_1_3比率.DefaultView;
+                DataView 表3_1_3view = new DataView(表3_1_3),
+                    上月表3_1_3view = new DataView(上月表3_1_3),
+                    表3_1_3比率view = new DataView(表3_1_3比率),
+                    上月表3_1_3比率view = new DataView(上月表3_1_3比率);
                 表3_1_3view.Sort =
                     上月表3_1_3view.Sort =
                     表3_1_3比率view.Sort =
@@ -391,8 +426,8 @@ select distinct d.TYPE2_NAME, b.stationid||'xx'||B.POINTID as instrid, b.bitem f
 select distinct d.TYPE2_NAME, b.stationid||'xx'||B.POINTID as instrid, E.INSTRTYPE||E.INSTRNAME as name from qzdata.qz_abnormity_itemlog a, qzdata.qz_abnormity_log b, qzdata.qz_abnormity_evalist c, QZDATA.QZ_ABNORMITY_TYPE2 d, qzdata.qz_abnormity_instrinfo e where a.log_id = b.log_id and B.STATIONID = c.stationid and b.pointid = c.pointid and C.SCIENCE != '辅助' and {0} and a.type2_id = D.TYPE2_ID and B.AB_ID = {1} and B.INSTRCODE = E.INSTRCODE
 ) where _TYPE2FILTER group by type2_name, name order by type2_name, count(instrid) desc".Replace("_TYPE2FILTER", type2filterstr), datestr, ab));
 
-                DataView 影响因素_bitem_仪器套数view = 影响因素_bitem_仪器套数.DefaultView;
-                DataView 影响因素_仪器名称_仪器套数view = 影响因素_仪器名称_仪器套数.DefaultView;
+                DataView 影响因素_bitem_仪器套数view = new DataView(影响因素_bitem_仪器套数);
+                DataView 影响因素_仪器名称_仪器套数view = new DataView(影响因素_仪器名称_仪器套数);
 
                 DataTable 表3_x_3_1tmp = 影响因素_仪器套数.Copy();
                 表3_x_3_1tmp.Columns[0].ColumnName = "影响因素";
@@ -440,7 +475,7 @@ select distinct d.TYPE2_NAME, b.stationid||'xx'||B.POINTID as instrid, E.INSTRTY
                     }
                     表3_x_3_1tmp.Rows[i]["多发仪器"] = tstr;
                 }
-                DataView 表3_x_3_1tmpview = 表3_x_3_1tmp.DefaultView;
+                DataView 表3_x_3_1tmpview = new DataView(表3_x_3_1tmp);
                 表3_x_3_1tmpview.RowFilter = "影响台站数 is not null and 多发测项 is not null and 多发仪器 is not null";
                 DataTable 表3_x_3_1 = 表3_x_3_1tmpview.ToTable();
 
