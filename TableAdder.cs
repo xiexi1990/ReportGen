@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using word = Microsoft.Office.Interop.Word;
 using System.Data.OracleClient;
 using System.Data;
+using Audit;
 
 
 namespace ReportGen

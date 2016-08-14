@@ -23,8 +23,8 @@ namespace ReportGen
             wordapp.Selection.ParagraphFormat.set_Style("标题 1");
             wordapp.Selection.TypeText("3 事件分析" + Environment.NewLine);
             wordapp.Selection.ParagraphFormat.set_Style("正文");
-            int 月总仪器数含正常 = orahlper.GetInt32((@"select  count(*) from (select distinct a.stationid , a.pointid  from qzdata.qz_abnormity_log a, qzdata.qz_abnormity_evalist b where (_DATE_ABID) and A.STATIONID = b.stationid and a.pointid = b.pointid 
-and b.science != '辅助') ").Replace("_DATE_ABID", datestr_abid));
+            int 月总仪器数含正常 = orahlper.GetInt32((@"select  count(*) from (select distinct a.stationid , a.pointid  from qzdata.qz_abnormity_log a, qzdata.qz_abnormity_evalist b where (_DATE) and (a.ab_id >= 1 and a.ab_id <= 7) and A.STATIONID = b.stationid and a.pointid = b.pointid 
+and b.science != '辅助') ").Replace("_DATE", datestr));
 
             int 月总台站数不含正常 = orahlper.GetInt32((@"select count(stationid) from (select distinct a.stationid from qzdata.qz_abnormity_log a, qzdata.qz_abnormity_evalist b where (_DATE_ABID) and A.STATIONID = b.stationid and a.pointid = b.pointid 
 and b.science != '辅助' and a.ab_id != 1)").Replace("_DATE_ABID", datestr_abid));
@@ -200,7 +200,7 @@ select distinct a.log_id, a.ab_id, b.science from qzdata.qz_abnormity_log a, qzd
             wordapp.Selection.TypeParagraph();
 
             DataTable 表3_1_2;
-            if (is_year)
+            if (IS_YEAR)
             {
                 表3_1_2 = Get_表3_1_2(the_year_begin_int, the_month_begin_int, the_year_end_int, the_month_end_int);
             }
@@ -219,7 +219,7 @@ select distinct a.log_id, a.ab_id, b.science from qzdata.qz_abnormity_log a, qzd
             wordapp.Selection.TypeParagraph();
 
             DataTable 表3_1_3;
-            if (is_year)
+            if (IS_YEAR)
             {
                 表3_1_3 = Get_表3_1_3(the_year_begin_int, the_month_begin_int, the_year_end_int, the_month_end_int);
             }
@@ -292,7 +292,7 @@ select distinct B.BITEM, C.TYPE2_NAME, B.STATIONID||'xx'||B.POINTID instrid from
                     }
                 }
                 DataTable 上月表3_1_2;
-                if (is_year)
+                if (IS_YEAR)
                 {
                     上月表3_1_2 = Get_表3_1_2(the_year_begin_int - 1, the_month_begin_int, the_year_end_int - 1, the_month_end_int);
                 }
@@ -363,7 +363,7 @@ select distinct stationid||'xx'||pointid as instrid from  qzdata.qz_abnormity_ev
                     }
                 }
                 DataTable 上月表3_1_3;
-                if(is_year)
+                if(IS_YEAR)
                 {
                     上月表3_1_3 = Get_表3_1_3(the_year_begin_int - 1, the_month_begin_int, the_year_end_int - 1, the_month_end_int);
                 }
